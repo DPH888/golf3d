@@ -1,26 +1,27 @@
 import { engine } from "./engine.mjs";
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
-import OrbitControls_ from 'three-orbit-controls';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { Ramp } from "./BuildingBlocks/Ramp.mjs";
 import { BuildingBlock } from "./BuildingBlocks/BuildingBlock.mjs";
 import { MovingPlatform } from "./BuildingBlocks/MovingPlatform.mjs";
 import { Cylinder } from "./BuildingBlocks/Cylinder.mjs";
 import { GolfHole } from "./BuildingBlocks/GolfHole.mjs";
-//Visuals for the game
+// Visuals for the game
 import { Skybox, skybox_texture } from "./asset_loading/assets_3d.mjs";
 import { firingTheBall } from "./firingTheBall.mjs";
-import { initSoundEvents,playRandomSoundEffectFall } from "./Sounds.mjs"
+import { initSoundEvents, playRandomSoundEffectFall } from "./Sounds.mjs";
 import { createPineTree } from "./BuildingBlock_no_collision/pine.mjs";
-import { createBall, ballMesh, ballBody,deleteBall } from "./ball.mjs";
+import { createBall, ballMesh, ballBody, deleteBall } from "./ball.mjs";
 import { createNewEmitter, updateEmitters } from "./BuildingBlocks/Particle.mjs";
 import { Menu, initMenu, menuConfig } from "./menu.mjs";
-import { areColliding } from "./utils.mjs";
-import { createHillsBufferGeometry } from "./Terrain/Hills.mjs";
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { forEach } from "lodash";
-const orbitControls = true;
+import { areColliding } from './utils.mjs';
+import { createHillsBufferGeometry } from './Terrain/Hills.mjs';
+import { forEach } from 'lodash';
 
+const orbitControls = true;
+let controls = null;
 let oldBallPosition = { x: 0, y: 0, z: 0 };
 
 function createGround() {
@@ -44,16 +45,17 @@ function initCamera() {
     engine.camera.position.set(0, 20, 80);
     engine.camera.lookAt(0, 10, 0);
 
-    //change far frustum plane to account for skybox
+    // Change far frustum plane to account for skybox
     engine.camera.far = 10000;
+    engine.camera.updateProjectionMatrix();
 }
 
 function initLights() {
-    //Ambient light is now the skybox
+    // Ambient light is now the skybox
     const ambientLight = new THREE.AmbientLight(skybox_texture, 1);
     engine.scene.add(ambientLight);
 
-    //directional light is white to not tint the phong material too much
+    // Directional light is white to not tint the Phong material too much
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(10, 20, 10);
     directionalLight.lookAt(0, 0, 0);
@@ -73,7 +75,7 @@ function initLevel() {
 
     new MovingPlatform(15, 20, 20, 30, 30, 30, 20, 1, 15);
     new Cylinder(25, 0, 2, 5, 5);
-    new GolfHole(51.2, -6, 0, 1.8, 1, 2.1, 64, 12, 51.2, -5.9, 0, 1, 2, 2)
+    new GolfHole(51.2, -6, 0, 1.8, 1, 2.1, 64, 12, 51.2, -5.9, 0, 1, 2, 2);
     createPineTree(0, 20, 0);
 }
 
@@ -81,18 +83,18 @@ let ballDirectionMesh = [];
 function initBallDirectionArrows() {
     let colors = [0xffd000, 0xff9900, 0xff0000];
     for (let i = 0; i < 3; i++) {
-        const ballDirectionGeometry = new THREE.ConeGeometry(.5, 5, 5);
+        const ballDirectionGeometry = new THREE.ConeGeometry(0.5, 5, 5);
         const ballDirectionMaterial = new THREE.MeshPhongMaterial({ color: colors[i], flatShading: true });
         ballDirectionMesh.push(new THREE.Mesh(ballDirectionGeometry, ballDirectionMaterial));
-        ballDirectionMesh[i].position.set(5, 30 + 4 * i, 0)
+        ballDirectionMesh[i].position.set(5, 30 + 4 * i, 0);
 
         engine.scene.add(ballDirectionMesh[i]);
     }
 }
+
 let time = 0, obx = 0, oby = 0, obz = 0;
-let controls = null;
 function initGame() {
-    //initSoundEvents();
+    // initSoundEvents();
     if (menuConfig.showMenu) {
         initMenu(initLevel);
     } else {
@@ -107,15 +109,17 @@ function initGame() {
     // Init slider and buttons for firing the ball
     firingTheBall.initUI();
 
+    // Setup camera position
+    initCamera();
+
     // Init orbit controls
     if (orbitControls) {
         controls = new OrbitControls(engine.camera, engine.canvas2d);
         controls.target = ballMesh.position;
+        controls.maxDistance = 150 
+        controls.enableDamping = true
+     controls.dampingFactor = .1
     }
-
-    // Setup camera position
-    initCamera();
-
     initLights();
 
     initBallDirectionArrows();
@@ -123,18 +127,17 @@ function initGame() {
     // Init skybox
     const skybox = new Skybox();
 
-    //DEBUG spawn test emitter
+    // DEBUG spawn test emitter
 
     let lastDX, lastDY, lastDZ;
 
     // Set custom update function
     engine.update = () => {
-
         time++;
-        controls.update();
+        if (controls) controls.update();
 
-        //update all particle systems
-        updateEmitters()
+        // Update all particle systems
+        updateEmitters();
 
         // Update ball mesh position
         ballMesh.position.copy(ballBody.position);
@@ -151,7 +154,7 @@ function initGame() {
 
         if (checkBounce({ x: lastDX, y: lastDY, z: lastDZ }, currentVelocities)) {
             console.log("TUP");
-            createNewEmitter(ballBody.position.x, ballBody.position.y, ballBody.position.z, "burst", {particle_cnt: 50, particle_lifetime: {min:0.2, max:0.5}, power: 0.05, fired: false})
+            createNewEmitter(ballBody.position.x, ballBody.position.y, ballBody.position.z, "burst", { particle_cnt: 50, particle_lifetime: { min: 0.2, max: 0.5 }, power: 0.05, fired: false });
             playRandomSoundEffectFall();
         }
         lastDX = currentVelocities.x;
@@ -163,17 +166,16 @@ function initGame() {
 
         show_the_ball_direction();
 
-        if(ballBody.position.y < -50){ //respawns the ball if it has fallen beneath the map
+        if (ballBody.position.y < -50) { // Respawns the ball if it has fallen beneath the map
             ballBody.position.set(firingTheBall.shotFromWhere.x, firingTheBall.shotFromWhere.y, firingTheBall.shotFromWhere.z);
-            ballBody.type = CANNON.Body.STATIC
+            ballBody.type = CANNON.Body.STATIC;
             firingTheBall.isBallShot = false;
         }
     };
 }
 
-
 function make_the_ball_static_when_is_not_moving() {
-    if (time % 100 == 0) {
+    if (time % 100 === 0) {
         let error = 0, bx = Math.abs(ballMesh.position.x), by = Math.abs(ballMesh.position.y), bz = Math.abs(ballMesh.position.z);
 
         if (bx - obx >= 0) {
@@ -212,9 +214,8 @@ function adjust_the_ball_direction() {
 
 function show_the_ball_direction() {
     for (let i = 0; i < 3; i++) {
-        if(firingTheBall.isBallShot){
+        if (firingTheBall.isBallShot) {
             ballDirectionMesh[i].visible = false;
-
             continue;
         }
         if (ballDirectionMesh[i] !== undefined) {
@@ -228,20 +229,19 @@ function show_the_ball_direction() {
                     ballMesh.position.z + Math.sin(firingTheBall.direction) * 3.5 * (i + 1)
                 );
 
-
-                ballDirectionMesh[i].rotation.x = Math.PI/2;
+                ballDirectionMesh[i].rotation.x = Math.PI / 2;
                 ballDirectionMesh[i].rotation.y = 0;
-                ballDirectionMesh[i].rotation.z = firingTheBall.direction - Math.PI/2;
+                ballDirectionMesh[i].rotation.z = firingTheBall.direction - Math.PI / 2;
 
             } else {
                 ballDirectionMesh[i].visible = false;
             }
         }
     }
-};
+}
 
 let game = {
     init: initGame
-}
+};
 
 export { game };
