@@ -13,7 +13,7 @@
     import { firingTheBall } from "./firingTheBall.mjs";
     import { initSoundEvents, playRandomSoundEffectFall } from "./Sounds.mjs";
     import { createPineTree } from "./BuildingBlock_no_collision/pine.mjs";
-    import { createBall, ballMesh, ballBody, deleteBall } from "./ball.mjs";
+    import { createBall, ballMesh, ballBody, moveBall } from "./ball.mjs";
     import { createNewEmitter, updateEmitters } from "./BuildingBlocks/Particle.mjs";
     import { Menu, initMenu, menuConfig } from "./menu.mjs";
     import { areColliding } from './utils.mjs';
@@ -21,7 +21,6 @@
 
     const orbitControls = true;
     let controls = null;
-    let oldBallPosition = { x: 0, y: 0, z: 0 };
 
     function createGround() {
         // Create ground plane
@@ -38,7 +37,14 @@
         groundMesh.rotation.x = -Math.PI / 2; // Rotate to align with Cannon.js
         engine.scene.add(groundMesh);
     }
+        engine.onmouseup = ((e) => {
+            let mouseX = e.clientX;
+            let mouseY = e.clientY;
+    if (areColliding(mouseX, mouseY, 1, 1, 275, 200, 250, 100)) { //Play
+        moveBall();
 
+    }
+})
     function initCamera() {
         // Init camera
         engine.camera.position.set(0, 20, 80);
@@ -91,7 +97,7 @@
         }
     }
 
-    let time = 0, obx = 0, oby = 0, obz = 0;
+    let time = 0;
     function initGame() {
         // initSoundEvents();
         if (menuConfig.showMenu) {
@@ -156,7 +162,6 @@
             const currentVelocities = { x: ballBody.velocity.x, y: ballBody.velocity.y, z: ballBody.velocity.z };
 
             if (checkBounce({ x: lastDX, y: lastDY, z: lastDZ }, currentVelocities)) {
-                console.log("TUP");
                 createNewEmitter(ballBody.position.x, ballBody.position.y, ballBody.position.z, "burst", { particle_cnt: 50, particle_lifetime: { min: 0.2, max: 0.5 }, power: 0.05, fired: false });
                 playRandomSoundEffectFall();
             }
@@ -176,38 +181,23 @@
             }
         };
     }
-
     function make_the_ball_static_when_is_not_moving() {
-        if (time % 100 == 0) {
-            let error = 0, bx = Math.abs(ballMesh.position.x), by = Math.abs(ballMesh.position.y), bz = Math.abs(ballMesh.position.z);
-
-            if (bx - obx >= 0) {
-                error = bx - obx;
-            } else {
-                error = bx + obx;
-            }
-
-            if (by - oby >= 0) {
-                error += by - oby;
-            } else {
-                error += by + oby;
-            }
-
-            if (bz - obz >= 0) {
-                error += bz - obz;
-            } else {
-                error += bz + obz;
-            }
-
-            if (error < 1) {
+        const velocityThreshold = 0;
+        const timeInterval = 10;
+    
+        if (time % timeInterval === 0 && ballBody.velocity.length() < velocityThreshold) {
+            const groundRay = new CANNON.Ray(
+                new CANNON.Vec3(ballBody.position.x, ballBody.position.y - 1.1, ballBody.position.z),
+                new CANNON.Vec3(ballBody.position.x, ballBody.position.y - 1.2, ballBody.position.z)
+            );
+    
+            const intersect = groundRay.intersectWorld(engine.cannonjs_world, {});
+    
+            if (intersect) {
                 ballBody.type = CANNON.Body.STATIC;
-                oldBallPosition = { x: 0, y: 0, z: 0 };
                 firingTheBall.isBallShot = false;
             }
 
-            obx = Math.abs(ballMesh.position.x);
-            oby = Math.abs(ballMesh.position.y);
-            obz = Math.abs(ballMesh.position.z);
         }
     }
 

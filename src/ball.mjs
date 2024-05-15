@@ -32,11 +32,17 @@ function createBall(x, y, z) {
     ballMesh.position.set(x, y, z);
     engine.scene.add(ballMesh);
 }
-function deleteBall() {
-    // Remove mesh from scene
-    engine.scene.remove(ballMesh);
-    // Remove body from world
-    engine.cannonjs_world.removeBody(ballBody);
+function moveBall(ballBody) {
+  // Apply velocity to the ball body
+  ballBody.velocity.set(11, 30, 0);
+
+  // Update ball position based on velocity (call this in your animation loop)
+  function updateBallPosition() {
+    ballMesh.position.copy(ballBody.position);
   }
+
+  // Add updateBallPosition to the animation loop
+  engine.animationLoop.push(updateBallPosition);
+}
   
-  export { createBall, deleteBall, ballMesh, ballBody };
+  export { createBall, ballMesh, ballBody, moveBall };

@@ -57,7 +57,6 @@ class Particle {
         this.isDead = true;
         engine.scene.remove(this.sprite)
         this.material.dispose()
-        console.log("Killed particle")
     }
 }
 
@@ -130,7 +129,6 @@ class Emitter {
             particle.killParticle();
         }
         this.isDead = true;
-        console.log("Killed emitter i:", this.index)
         emitters.splice(this.index, 1);
     }
 }
