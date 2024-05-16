@@ -5,7 +5,6 @@ import { materials } from "./asset_loading/assets_3d.mjs";
 let ballMesh, ballBody;
 
 function createBall(x, y, z) {
-    // Ball
     const ballMaterialPhysics = new CANNON.Material(); // Create a new material
     ballMaterialPhysics.friction = 1;
     ballMaterialPhysics.restitution = 1.3;
@@ -32,17 +31,4 @@ function createBall(x, y, z) {
     ballMesh.position.set(x, y, z);
     engine.scene.add(ballMesh);
 }
-function moveBall(ballBody) {
-  // Apply velocity to the ball body
-  ballBody.velocity.set(11, 30, 0);
-
-  // Update ball position based on velocity (call this in your animation loop)
-  function updateBallPosition() {
-    ballMesh.position.copy(ballBody.position);
-  }
-
-  // Add updateBallPosition to the animation loop
-  engine.animationLoop.push(updateBallPosition);
-}
-  
-  export { createBall, ballMesh, ballBody, moveBall };
+  export { createBall, ballMesh, ballBody  };

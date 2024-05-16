@@ -8,10 +8,8 @@ function createHillsBufferGeometry(sizeX, sizeY, N, noiseScale, scaleZ) {
 
     // TODO: refactor and make readable
     const uvTex = new THREE.TextureLoader().load("./images/LiminalTextureLib/Grass2.jpg");
-    console.log(uvTex)
     const material01 = new THREE.MeshPhongMaterial({ map: uvTex, side: THREE.DoubleSide, });	//   uv grid
     const geometry = new THREE.BufferGeometry();
-    console.log(sizeX, sizeY)
     // const vertices = new Float32Array([
     //     -1.0, -1.0, 1.0, // v0
     //     1.0, -1.0, 1.0, // v1
@@ -45,7 +43,6 @@ function createHillsBufferGeometry(sizeX, sizeY, N, noiseScale, scaleZ) {
         [x + (y+1)*N+ 1, x + (y+1)*N, x+y*N+ 1]
     )).reduce((list, curTriangle)=>Array.prototype.concat(list, curTriangle), [])
     .reduce((list, curTriangle)=>Array.prototype.concat(list, curTriangle), []);
-    console.log(vertices);
     // console.log(ind2);
 
     // const indices = [
@@ -55,15 +52,12 @@ function createHillsBufferGeometry(sizeX, sizeY, N, noiseScale, scaleZ) {
     //     2, 3, 0,
     // ];
     let indices = Array.prototype.concat(indices1, indices2);
-    console.log(indices);
     let repOn = 2;
     let uvMap = Array.from({ length: N }, (_, x) => Array.from({ length: N }, (_, y) => 
         [(x%repOn)/repOn, (y%repOn)/repOn]
     )).reduce((list, curTriangle)=>Array.prototype.concat(list, curTriangle), [])
     .reduce((list, curTriangle)=>Array.prototype.concat(list, curTriangle), []);
-    console.log(vertices);
 
-    console.log(uvMap);
     geometry.setIndex(indices);
     geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
     geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvMap), 2));
@@ -72,7 +66,6 @@ function createHillsBufferGeometry(sizeX, sizeY, N, noiseScale, scaleZ) {
     // const material = new THREE.MeshPhongMaterial({ color: "green" });
     const mesh = new THREE.Mesh(geometry, material01);
 
-    console.log(mesh);
     mesh.position.set(-sizeX*N/2, -20, -sizeY*N/2);
     mesh.scale.set(sizeX, scaleZ, sizeY);
     engine.scene.add(mesh);

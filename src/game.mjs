@@ -3,20 +3,21 @@
     import * as CANNON from "cannon-es";
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import Stats from 'three/examples/jsm/libs/stats.module.js';
+    import { areColliding } from './utils.mjs';
+    import { firingTheBall } from "./firingTheBall.mjs";
+    import { Menu, initMenu, menuConfig } from "./menu.mjs";
+    import { initSoundEvents, playRandomSoundEffectFall } from "./Sounds.mjs";
+        // Visuals for the game
     import { Ramp } from "./BuildingBlocks/Ramp.mjs";
     import { BuildingBlock } from "./BuildingBlocks/BuildingBlock.mjs";
     import { MovingPlatform } from "./BuildingBlocks/MovingPlatform.mjs";
     import { Cylinder } from "./BuildingBlocks/Cylinder.mjs";
     import { GolfHole } from "./BuildingBlocks/GolfHole.mjs";
-    // Visuals for the game
+    import { GolfHole_Detection } from "./BuildingBlocks/GolfHole_DetectionPoint.mjs";
     import { Skybox, skybox_texture } from "./asset_loading/assets_3d.mjs";
-    import { firingTheBall } from "./firingTheBall.mjs";
-    import { initSoundEvents, playRandomSoundEffectFall } from "./Sounds.mjs";
     import { createPineTree } from "./BuildingBlock_no_collision/pine.mjs";
-    import { createBall, ballMesh, ballBody, moveBall } from "./ball.mjs";
+    import { createBall, ballMesh, ballBody } from "./ball.mjs";
     import { createNewEmitter, updateEmitters } from "./BuildingBlocks/Particle.mjs";
-    import { Menu, initMenu, menuConfig } from "./menu.mjs";
-    import { areColliding } from './utils.mjs';
     import { createHillsBufferGeometry } from './Terrain/Hills.mjs';
 
     const orbitControls = true;
@@ -37,14 +38,7 @@
         groundMesh.rotation.x = -Math.PI / 2; // Rotate to align with Cannon.js
         engine.scene.add(groundMesh);
     }
-        engine.onmouseup = ((e) => {
-            let mouseX = e.clientX;
-            let mouseY = e.clientY;
-    if (areColliding(mouseX, mouseY, 1, 1, 275, 200, 250, 100)) { //Play
-        moveBall();
 
-    }
-})
     function initCamera() {
         // Init camera
         engine.camera.position.set(0, 20, 80);
@@ -80,7 +74,9 @@
 
         new MovingPlatform(15, 20, 20, 30, 30, 30, 20, 1, 15);
         new Cylinder(25, 0, 2, 5, 5);
-        new GolfHole(51.2, -6, 0, 1.8, 1, 2.1, 64, 12, 51.2, -5.9, 0, 1, 2, 2);
+        new GolfHole(51.2, -6, 0, 1.8, 1, 2.1, 64, 12);
+        new GolfHole_Detection(51.2, -5.9, 0, 1, 2, 2);
+
         createPineTree(0, 20, 0);
     }
 
@@ -144,7 +140,6 @@
         engine.update = () => {
             time++;
             if (controls) controls.update();
-
             // Update all particle systems
             updateEmitters();
 
