@@ -3,7 +3,7 @@
     import * as CANNON from "cannon-es";
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import Stats from 'three/examples/jsm/libs/stats.module.js';
-    import { areColliding } from './utils.mjs';
+    import { areColliding, randomInteger, drawLine, drawImage, isFunction, createButton } from './utils.mjs';
     import { firingTheBall } from "./firingTheBall.mjs";
     import { Menu, initMenu, menuConfig } from "./menu.mjs";
     import { initSoundEvents, playRandomSoundEffectFall } from "./Sounds.mjs";
@@ -19,7 +19,6 @@
     import { createBall, ballMesh, ballBody } from "./ball.mjs";
     import { createNewEmitter, updateEmitters } from "./BuildingBlocks/Particle.mjs";
     import { createHillsBufferGeometry } from './Terrain/Hills.mjs';
-
     const orbitControls = true;
     let controls = null;
 
@@ -40,6 +39,8 @@
     }
 
     function initCamera() {
+        createButton("Play",275,175,250,100,"red",50,"white");
+
         // Init camera
         engine.camera.position.set(0, 20, 80);
         engine.camera.lookAt(0, 10, 0);
@@ -123,6 +124,7 @@
             if (menuConfig.gameStarted == false) {
                 controls.autoRotate = true
                 controls.autoRotateSpeed = 0.5
+
             }
         }
         initLights();
@@ -138,7 +140,6 @@
 
         // Set custom update function
         engine.update = () => {
-            time++;
             if (controls) controls.update();
             // Update all particle systems
             updateEmitters();
