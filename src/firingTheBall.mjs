@@ -57,6 +57,7 @@ function initShootingUI() {
   });
 }
 
+
 function shoot() {
   const currentTime = Date.now();
   
@@ -88,5 +89,6 @@ function shoot() {
   let relativePoint = new CANNON.Vec3();
   ballBody.applyImpulse(impulse, relativePoint);
 }
+
 
 export { firingTheBall };

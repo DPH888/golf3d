@@ -5,6 +5,7 @@ import { materials } from "./asset_loading/assets_3d.mjs";
 let ballMesh, ballBody;
 
 function createBall(x, y, z) {
+    // Ball
     const ballMaterialPhysics = new CANNON.Material(); // Create a new material
     ballMaterialPhysics.friction = 1;
     ballMaterialPhysics.restitution = 1.3;
@@ -31,4 +32,11 @@ function createBall(x, y, z) {
     ballMesh.position.set(x, y, z);
     engine.scene.add(ballMesh);
 }
-  export { createBall, ballMesh, ballBody  };
+function deleteBall() {
+    // Remove mesh from scene
+    engine.scene.remove(ballMesh);
+    // Remove body from world
+    engine.cannonjs_world.removeBody(ballBody);
+  }
+  
+  export { createBall, deleteBall, ballMesh, ballBody };

@@ -3,7 +3,7 @@ import { game } from "./game.mjs"
 import { initGlobalImages } from "./asset_loading/asset_loader2d.mjs";
 import { loadLiminalTextureLib } from "./asset_loading/assets_3d.mjs";
 import { initSounds } from "./asset_loading/asset_loader_sounds.mjs";
-    
+import { UIAddObj } from './LevelEditor/ObjectAdd.mjs'
 document.body.onload = () => {
     console.log("Front end scripts starting.");
 
@@ -21,4 +21,6 @@ document.body.onload = () => {
     engine.init();
 
     game.init();
+
+    UIAddObj();
 };

@@ -3,6 +3,7 @@ import { engine } from "../engine.mjs";
 import * as CANNON from "cannon-es";
 import { materials } from "../asset_loading/assets_3d.mjs";
 import * as perlin from 'perlin.js';
+import { createPineTree } from "../BuildingBlock_no_collision/pine.mjs";
 
 function createHillsBufferGeometry(sizeX, sizeY, N, noiseScale, scaleZ) {
 
@@ -30,7 +31,6 @@ function createHillsBufferGeometry(sizeX, sizeY, N, noiseScale, scaleZ) {
             curRow
                 .map((height, j)=>[i, height, j])
                 .reduce((vertices, curVertex)=>{
-                    // console.log(vertices, curVertex);
                     return vertices.concat(curVertex)}, []));
     }, []);
 
@@ -43,7 +43,6 @@ function createHillsBufferGeometry(sizeX, sizeY, N, noiseScale, scaleZ) {
         [x + (y+1)*N+ 1, x + (y+1)*N, x+y*N+ 1]
     )).reduce((list, curTriangle)=>Array.prototype.concat(list, curTriangle), [])
     .reduce((list, curTriangle)=>Array.prototype.concat(list, curTriangle), []);
-    // console.log(ind2);
 
     // const indices = [
     // // V0 V1 V2
@@ -69,6 +68,25 @@ function createHillsBufferGeometry(sizeX, sizeY, N, noiseScale, scaleZ) {
     mesh.position.set(-sizeX*N/2, -20, -sizeY*N/2);
     mesh.scale.set(sizeX, scaleZ, sizeY);
     engine.scene.add(mesh);
+    return mesh;
 }
 
-export {createHillsBufferGeometry};
+function addTreesToGround(groundMesh, numTrees) {
+    const positions = groundMesh.geometry.attributes.position.array;
+    const scaleX = groundMesh.scale.x;
+    const scaleZ = groundMesh.scale.z;
+    const scaleY = groundMesh.scale.y;
+
+    const groundWidth = Math.sqrt(positions.length / 3);
+    const groundHeight = Math.sqrt(positions.length / 3);
+
+    for (let i = 0; i < numTrees; i++) {
+        const x = Math.random() * (groundWidth * scaleX) - (groundWidth * scaleX) / 2;
+        const z = Math.random() * (groundHeight * scaleZ) - (groundHeight * scaleZ) / 2;
+        const vertexIndex = Math.floor(((x + (groundWidth * scaleX) / 2) / scaleX) * groundWidth + ((z + (groundHeight * scaleZ) / 2) / scaleZ));
+        const height = positions[vertexIndex * 3 + 1] * scaleY + groundMesh.position.y;
+
+        createPineTree(x, height, z);
+    }
+}
+export {createHillsBufferGeometry, addTreesToGround};

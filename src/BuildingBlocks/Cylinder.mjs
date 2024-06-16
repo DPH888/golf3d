@@ -22,7 +22,6 @@ class Cylinder {
         // cylinderShape.transformAllPoints(translation, quat);
         cylinderBody.addShape(cylinderShape);
         cylinderBody.position.set(x, y, z);
-        console.log(cylinderBody.position, cylinder.position);
         cylinderBody.type = CANNON.Body.STATIC;
         engine.cannonjs_world.addBody(cylinderBody);
     }

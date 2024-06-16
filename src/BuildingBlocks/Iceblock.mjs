@@ -1,13 +1,13 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { engine } from "../engine.mjs";
-import { materials } from "../asset_loading/assets_3d.mjs";
 
-class BuildingBlock {
+class Ice{
     constructor(x, y, z, width, height, depth) {
+
         // Block visual representation
         var geometry = new THREE.BoxGeometry(width, height, depth);
-        var material = materials.Concrete1;
+        var material = new THREE.MeshPhongMaterial({ color: 0x00ffff });
         var cube = new THREE.Mesh(geometry, material);
         cube.position.set(x, y, z);
         engine.scene.add(cube);
@@ -15,7 +15,7 @@ class BuildingBlock {
         // Block physics and collision detection
         const groundMaterialPhysics = new CANNON.Material(); // Create a new material
         groundMaterialPhysics.restitution = 0.5; // Set the restitution coefficient to 0.5 (adjust as needed)
-        groundMaterialPhysics.friction = 1;
+        groundMaterialPhysics.friction = 0.1;
         var cubeShape = new CANNON.Box(new CANNON.Vec3(width/2, height/2, depth/2));
         var cubeBody = new CANNON.Body({ mass: 0, material: groundMaterialPhysics});
         cubeBody.addShape(cubeShape);
@@ -24,4 +24,4 @@ class BuildingBlock {
         engine.cannonjs_world.addBody(cubeBody);
     }
 }
-export {BuildingBlock}
+export {Ice}

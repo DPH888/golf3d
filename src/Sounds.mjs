@@ -31,6 +31,7 @@ function initSoundEvents() {
   let isMusicPlayingClick = false; // Flag to track playback
 
   document.body.addEventListener('click', (event) => {
+    console.log("Clicked at X:", event.clientX, "Y:", event.clientY);
 
     if (!isMusicPlayingClick) { // Only play if not already playing
       playBackgroundMusic();

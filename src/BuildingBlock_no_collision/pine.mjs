@@ -9,14 +9,13 @@ function createPineTree(x, y, z) {
         1, 1, treeHeight, 10 );
     let trunkMesh = new THREE.Mesh(trunkGeom, materials.Wood);
     trunkMesh.position.set(0, treeHeight/2 ,0);
-    console.log(materials.Wood)
     treeGroup.add(trunkMesh);
     treeGroup.position.set(x, y, z);
 
 
     for(let i = 0; i <= nSegments; i++) {
         let treeSegmentGeom = new THREE.ConeGeometry( 1 +  biggestSegmentRadius/(2+i), 2 + (treeHeight - baseHeight)/nSegments, 32 );
-        let treeMesh = new THREE.Mesh(treeSegmentGeom, materials.Grass);
+        let treeMesh = new THREE.Mesh(treeSegmentGeom, materials.Pine);
         treeMesh.position.set(0, baseHeight + i*(treeHeight-baseHeight)/nSegments, 0);
         treeGroup.add(treeMesh);
     }

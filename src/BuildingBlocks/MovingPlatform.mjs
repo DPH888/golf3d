@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { engine } from "../engine.mjs";
+import { materials } from "../asset_loading/assets_3d.mjs";
 
 /*
 x1,y1,z1 - where the platform initially is
@@ -13,7 +14,7 @@ class MovingPlatform{
     constructor(x1, y1, z1, x2, y2, z2, width, height, depth, timeToStay = 1500, timeToTravel = 200) {
         // Block visual representation
         var geometry = new THREE.BoxGeometry(width, height, depth);
-        var material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+        var material = materials.Planks1;
         var cube = new THREE.Mesh(geometry, material);
         cube.position.set(x1, y1, z1);
         engine.scene.add(cube);
@@ -24,7 +25,7 @@ class MovingPlatform{
         groundMaterialPhysics.restitution = 0.5; // Set the restitution coefficient to 0.5 (adjust as needed)
         groundMaterialPhysics.friction = 1;
         var cubeShape = new CANNON.Box(new CANNON.Vec3(width/2, height/2, depth/2));
-        var cubeBody = new CANNON.Body({ mass: 1000, material: groundMaterialPhysics});
+        var cubeBody = new CANNON.Body({ mass: 0, material: groundMaterialPhysics});
         cubeBody.addShape(cubeShape);
         cubeBody.position.set(x1, y1, z1);
         cubeBody.type = CANNON.Body.STATIC;

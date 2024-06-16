@@ -1,3 +1,5 @@
+import { roughness } from "three/examples/jsm/nodes/Nodes.js";
+
 let default2dImages = [
     { imageName: 'circle', backupColor: 'black' },
     { imageName: 'backField', backupColor: 'green' }
@@ -18,7 +20,9 @@ let materials_data = [
     { name: "Wood", path: './images/LiminalTextureLib/Wood2.jpg', tilingx: 1, tilingy: 1, tint: 0xffffff, metalness: 0, roughness: 0.5 },
     { name: "Metal2", path: './images/LiminalTextureLib/Metal2.jpg', tilingx: 1, tilingy: 1, tint: 0xffffff, metalness: 0.7, roughness: 0.5 },
     { name: "Ice", path: './images/LiminalTextureLib/Ice.jpg', tilingx: 1, tilingy: 1, tint: 0xffffff, metalness: 0.3, roughness: 0.2 },
-    { name: "GolfBall", path: './images/LiminalTextureLib/GolfBall.jpg', tilingx: 3, tilingy: 3, tint: 0xffffff, metalness: 0, roughness: 0.8 }
+    { name: "GolfBall", path: './images/LiminalTextureLib/GolfBall.jpg', tilingx: 3, tilingy: 3, tint: 0xffffff, metalness: 0, roughness: 0.8 },
+    { name:"Flag", path:'./images/LiminalTextureLib/Flag_of_Bulgaria.png', tilingx: 1, tilingy: 1, tint: 0xffffff},
+    { name:"Pine", path:'./images/LiminalTextureLib/Pine.jpg', tilingx: 3, tilingy: 3, tint: 0x006400, roughness: 1.}
 ];
 
 
