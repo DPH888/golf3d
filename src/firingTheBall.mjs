@@ -82,7 +82,7 @@ function shoot() {
     ballBody.type = CANNON.Body.DYNAMIC;
   }
 
-  let calPower = firingTheBall.power;
+  let calPower = firingTheBall.power*10;
   let calDirection = firingTheBall.direction;
 
   let impulse = new CANNON.Vec3(Math.cos(calDirection) * calPower, 0, Math.sin(calDirection) * calPower);
