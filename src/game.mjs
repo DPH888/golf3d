@@ -108,9 +108,9 @@ function initGame() {
         menuConfig.gameStarted = true;
         initSoundEvents();
         initLevel();
-        firingTheBall.initUI();
 
     }
+
     // Create ball and attach to window
     createBall(5, 30, 0);
 
